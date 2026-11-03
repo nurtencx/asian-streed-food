@@ -13,6 +13,43 @@
             margin: 0;
             padding: 10px;
         }
+
+        /* OUTSIDE RESTAURANT INTRO SCREEN */
+        #intro-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, #2a085c 0%, #090214 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+        .restaurant-exterior {
+            border: 4px solid #ff0055;
+            padding: 30px;
+            border-radius: 20px;
+            background: rgba(20, 5, 35, 0.9);
+            box-shadow: 0 0 30px #ff0055;
+            text-align: center;
+            max-width: 400px;
+            animation: pulse 2s infinite alternate;
+        }
+        @keyframes pulse { from { box-shadow: 0 0 15px #ff0055; } to { box-shadow: 0 0 35px #00f0ff; } }
+        
+        .neon-sign {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffda79;
+            text-shadow: 0 0 10px #ff0055, 0 0 20px #ff0055;
+            margin-bottom: 15px;
+        }
+        .door-icon { font-size: 60px; margin: 15px 0; cursor: pointer; transition: transform 0.3s; }
+        .door-icon:hover { transform: scale(1.1); }
+        .customer-walk { font-size: 35px; animation: walkIn 2s infinite; }
+        @keyframes walkIn { 0% { transform: translateY(20px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+
+        /* MAIN GAME CONTAINER */
         .game-container {
             max-width: 780px;
             margin: auto;
@@ -21,6 +58,7 @@
             border-radius: 15px;
             padding: 15px;
             box-shadow: 0 0 20px #ff0055;
+            display: none; /* Shown after intro */
         }
         h1 { color: #ff0055; margin: 5px 0; text-shadow: 0 0 10px #ff0055; }
         .score-bar {
@@ -36,7 +74,7 @@
         }
 
         .cafe-floor {
-            background: linear-gradient(45deg, #2c163f 25%, #231034 25%, #231034 50%, #2c163f 50%, #2c163f 75%, #231034 75%, #2c163f 75%, #231034 100%);
+            background: linear-gradient(45deg, #2c163f 25%, #231034 25%, #231034 50%, #2c163f 50%, #2c163f 75%, #231034 75%, #231034 100%);
             background-size: 40px 40px;
             border: 3px solid #ffda79;
             border-radius: 12px;
@@ -62,14 +100,22 @@
             border: 2px solid #00f0ff;
             border-radius: 10px;
             padding: 10px;
-            min-height: 95px;
+            min-height: 110px;
             position: relative;
         }
         .table-dirty { border-color: #ff0055; background: rgba(255, 0, 85, 0.15); }
         .table-occupied { border-color: #ffda79; }
 
-        .chef-icon { font-size: 30px; animation: cook 1.5s infinite alternate; }
-        @keyframes cook { from { transform: scale(1); } to { transform: scale(1.1); } }
+        .timer-badge {
+            background: #ff0055;
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-top: 4px;
+            display: inline-block;
+        }
 
         .btn {
             background: #ff0055;
@@ -119,7 +165,7 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 8px;
-            max-height: 180px;
+            max-height: 160px;
             overflow-y: auto;
             background: #120520;
             padding: 8px;
@@ -139,9 +185,22 @@
 </head>
 <body>
 
-<div class="game-container">
+<!-- OUTSIDE RESTAURANT INTRO ANIMATION -->
+<div id="intro-screen">
+    <div class="restaurant-exterior">
+        <div class="neon-sign">⛩️ ASIAN STREET NIGHT MARKET 🏮</div>
+        <p style="color: #00f0ff; font-size: 14px;">Welcome to Master Chef Lee's Cafe Stall!</p>
+        <div class="door-icon">🚪🏮</div>
+        <div class="customer-walk">🧍 ➡️ 🏮</div>
+        <p style="font-size: 12px; color: #ffda79; margin-top: 10px;">Customers are waiting at the entrance...</p>
+        <button class="btn" style="font-size: 16px; padding: 12px 20px; background: #1dd1a1; color: #000;" onclick="enterRestaurant()">⛩️ Open Entrance Door & Enter</button>
+    </div>
+</div>
+
+<!-- MAIN CAFELAND GAME -->
+<div class="game-container" id="main-game">
     <h1>⛩️ ASIAN STREET CAFELAND 🏮</h1>
-    <p style="color: #00f0ff; margin-bottom: 10px;">Select required ingredients & unlock new Asian Street Foods with points!</p>
+    <p style="color: #00f0ff; margin-bottom: 10px;">Serve customers within 15 seconds or lose 10 points!</p>
 
     <div class="score-bar">
         <span>💰 Score: <span id="score" style="color: #00f0ff;">0</span> pts</span>
@@ -152,7 +211,7 @@
     <div class="cafe-floor">
         <div class="kitchen-area">
             <h3>🍳 Kitchen</h3>
-            <div class="chef-icon">👨‍🍳</div>
+            <div style="font-size: 30px;">👨‍🍳</div>
             <p style="font-size: 12px; color: #ffda79;">Master Chef Lee</p>
             <button class="btn btn-clean" id="kitchen-clean-btn" onclick="cleanKitchen()">🧹 Clean Kitchen (+15 pts)</button>
         </div>
@@ -211,13 +270,19 @@
     let selectedIngredients = [];
 
     const tables = [
-        { id: 1, status: "empty", customer: null, order: null },
-        { id: 2, status: "empty", customer: null, order: null },
-        { id: 3, status: "empty", customer: null, order: null },
-        { id: 4, status: "empty", customer: null, order: null }
+        { id: 1, status: "empty", customer: null, order: null, timer: null, timeLeft: 15 },
+        { id: 2, status: "empty", customer: null, order: null, timer: null, timeLeft: 15 },
+        { id: 3, status: "empty", customer: null, order: null, timer: null, timeLeft: 15 },
+        { id: 4, status: "empty", customer: null, order: null, timer: null, timeLeft: 15 }
     ];
 
     const customerAvatars = ["🧑", "👩", "🧔", "👧", "👨‍🌾"];
+
+    function enterRestaurant() {
+        document.getElementById("intro-screen").style.display = "none";
+        document.getElementById("main-game").style.display = "block";
+        document.getElementById("log").innerText = "Door opened! Customers are entering the Asian Night Market Cafe.";
+    }
 
     function renderTables() {
         const container = document.getElementById("tables-container");
@@ -228,19 +293,20 @@
             box.className = `table-box ${table.status === 'dirty' ? 'table-dirty' : ''} ${table.status === 'occupied' || table.status === 'ordered' ? 'table-occupied' : ''}`;
             
             let content = `<small style="color:#00f0ff;">Table ${table.id}</small><br>`;
-            content += `<span style="font-size:18px;">🪑🍽️🪑</span><br>`;
+            content += `<span style="font-size:16px;">🪑🍽️🪑</span><br>`;
 
             if (table.status === "empty") {
                 content += `<button class="btn" style="font-size:10px;" onclick="seatCustomer(${table.id})">🧍 Seat Customer</button>`;
             } else if (table.status === "occupied") {
-                content += `<span style="font-size:20px;">${table.customer}</span><br>`;
+                content += `<span style="font-size:18px;">${table.customer}</span><br>`;
                 content += `<button class="btn" style="font-size:10px; background:#ffda79; color:#000;" onclick="takeOrder(${table.id})">📋 Take Order</button>`;
             } else if (table.status === "ordered") {
-                content += `<span style="font-size:18px;">${table.customer}</span> <small style="color:#ffda79;">Order: <b>${table.order.name}</b></small><br>`;
-                content += `<button class="btn" style="font-size:10px; background:#1dd1a1; color:#000;" onclick="prepareFood(${table.id})">🥢 Prepare Ingredients</button>`;
+                content += `<span style="font-size:16px;">${table.customer}</span> <small style="color:#ffda79;"><b>${table.order.name}</b></small><br>`;
+                content += `<div class="timer-badge">⏱️ ${table.timeLeft}s</div><br>`;
+                content += `<button class="btn" style="font-size:10px; background:#1dd1a1; color:#000;" onclick="prepareFood(${table.id})">🥢 Prepare</button>`;
             } else if (table.status === "dirty") {
-                content += `<span style="font-size:14px; color:#ff0055;">🧽 Dirty Table</span><br>`;
-                content += `<button class="btn" style="background:#00f0ff; color:#000; font-size:10px;" onclick="cleanTable(${table.id})">🧽 Clean Table (+15 pts)</button>`;
+                content += `<span style="font-size:13px; color:#ff0055;">🧽 Dirty Table</span><br>`;
+                content += `<button class="btn" style="background:#00f0ff; color:#000; font-size:10px;" onclick="cleanTable(${table.id})">🧽 Clean (+15 pts)</button>`;
             }
 
             box.innerHTML = content;
@@ -254,7 +320,7 @@
             t.status = "occupied";
             t.customer = customerAvatars[Math.floor(Math.random() * customerAvatars.length)];
             renderTables();
-            document.getElementById("log").innerText = `Customer sat at Table ${tableId}! Take their order.`;
+            document.getElementById("log").innerText = `Customer entered and sat at Table ${tableId}! Take their order.`;
         }
     }
 
@@ -263,8 +329,42 @@
         const unlockedFoods = streetFoods.filter(f => score >= f.reqScore);
         t.order = unlockedFoods[Math.floor(Math.random() * unlockedFoods.length)];
         t.status = "ordered";
+        t.timeLeft = 15;
+
+        // START 15-SECOND TIMER
+        clearInterval(t.timer);
+        t.timer = setInterval(() => {
+            t.timeLeft--;
+            if (t.timeLeft <= 0) {
+                clearInterval(t.timer);
+                customerTimedOut(t);
+            }
+            renderTables();
+        }, 1000);
+
         renderTables();
-        document.getElementById("log").innerText = `Table ${tableId} ordered ${t.order.name}! Click 'Prepare Ingredients'.`;
+        document.getElementById("log").style.color = "#ffda79";
+        document.getElementById("log").innerText = `Table ${tableId} ordered ${t.order.name}! Prepare in 15s or lose 10 pts!`;
+    }
+
+    function customerTimedOut(table) {
+        score = Math.max(0, score - 10);
+        table.status = "dirty";
+        table.customer = null;
+        table.order = null;
+
+        if (selectedTableForPrep && selectedTableForPrep.id === table.id) {
+            selectedTableForPrep = null;
+            document.getElementById("recipe-info-box").style.display = "none";
+            document.getElementById("ingredient-list").innerHTML = "";
+            document.getElementById("cook-btn").style.display = "none";
+        }
+
+        document.getElementById("score").innerText = score;
+        document.getElementById("log").style.color = "#ff0055";
+        document.getElementById("log").innerText = `⏰ Time out! Customer at Table ${table.id} got mad and left (-10 pts)! Table is dirty.`;
+        renderTables();
+        renderMenu();
     }
 
     function prepareFood(tableId) {
@@ -281,7 +381,6 @@
         const container = document.getElementById("ingredient-list");
         container.innerHTML = "";
 
-        // TÜM MALZEMELER KİLİTSİZ VE DEREKT SEÇİLEBİLİR DUMURDA
         t.order.ingredients.forEach(ingName => {
             const btn = document.createElement("button");
             btn.className = "ingredient-btn";
@@ -320,6 +419,9 @@
             document.getElementById("log").innerText = "⚠️ Select all 3 ingredients for " + selectedTableForPrep.order.name + "!";
             return;
         }
+
+        // STOP TIMER FOR THIS TABLE
+        clearInterval(selectedTableForPrep.timer);
 
         score += 30;
         servedCount++;
