@@ -104,18 +104,17 @@
             background: #170529;
             color: #ffda79;
             border: 1px solid #ffda79;
-            padding: 6px 10px;
-            margin: 3px;
+            padding: 8px 14px;
+            margin: 4px;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 13px;
         }
         .ingredient-btn.selected {
             background: #1dd1a1;
             color: #000;
             font-weight: bold;
         }
-        .ingredient-btn:disabled { opacity: 0.4; border-color: #555; color: #888; }
 
         .menu-grid {
             display: grid;
@@ -143,7 +142,7 @@
 
 <div class="game-container">
     <h1>⛩️ ASIAN STREET CAFELAND 🏮</h1>
-    <p style="color: #00f0ff; margin-bottom: 10px;">Unlock Asian Street Foods & Ingredients with points!</p>
+    <p style="color: #00f0ff; margin-bottom: 10px;">Prepare required ingredients & unlock Asian Street Foods with score!</p>
 
     <div class="score-bar">
         <span>💰 Score: <span id="score" style="color: #00f0ff;">0</span> pts</span>
@@ -162,7 +161,7 @@
         <div class="tables-area" id="tables-container"></div>
     </div>
 
-    <!-- PREPARATION & INGREDIENT UNLOCK AREA WITH INFO -->
+    <!-- PREPARATION & INGREDIENT AREA -->
     <div class="prep-area">
         <h3 style="margin:2px; color:#ffda79;">🥢 Food Preparation Station</h3>
         <p id="prep-instruction" style="font-size: 13px; color: #00f0ff;">Select a table order to view recipe info & prepare ingredients.</p>
@@ -184,26 +183,26 @@
 
 <script>
     const streetFoods = [
-        { name: "Ramen", reqScore: 0, ingredients: [{ name: "Noodles", pts: 0 }, { name: "Broth", pts: 15 }, { name: "Egg", pts: 30 }] },
-        { name: "Pad Thai", reqScore: 50, ingredients: [{ name: "Rice Noodles", pts: 55 }, { name: "Peanuts", pts: 65 }, { name: "Tofu", pts: 75 }] },
-        { name: "Takoyaki", reqScore: 100, ingredients: [{ name: "Octopus", pts: 105 }, { name: "Batter", pts: 115 }, { name: "Mayo", pts: 125 }] },
-        { name: "Bao Buns", reqScore: 150, ingredients: [{ name: "Pork", pts: 155 }, { name: "Steamed Bun", pts: 165 }, { name: "Hoisin", pts: 175 }] },
-        { name: "Dim Sum", reqScore: 200, ingredients: [{ name: "Wrapper", pts: 205 }, { name: "Shrimp", pts: 215 }, { name: "Chili Oil", pts: 225 }] },
-        { name: "Tanghulu", reqScore: 250, ingredients: [{ name: "Strawberries", pts: 255 }, { name: "Sugar", pts: 265 }, { name: "Skewer", pts: 275 }] },
-        { name: "Boba Tea", reqScore: 300, ingredients: [{ name: "Tapioca", pts: 305 }, { name: "Milk Tea", pts: 315 }, { name: "Ice", pts: 325 }] },
-        { name: "Satay Skewers", reqScore: 350, ingredients: [{ name: "Chicken", pts: 355 }, { name: "Peanut Sauce", pts: 365 }, { name: "Cucumber", pts: 375 }] },
-        { name: "Gyoza", reqScore: 400, ingredients: [{ name: "Minced Meat", pts: 405 }, { name: "Cabbage", pts: 415 }, { name: "Soy Sauce", pts: 425 }] },
-        { name: "Banh Mi", reqScore: 450, ingredients: [{ name: "Baguette", pts: 455 }, { name: "Pate", pts: 465 }, { name: "Pickled Veg", pts: 475 }] },
-        { name: "Taiyaki", reqScore: 500, ingredients: [{ name: "Waffle Batter", pts: 505 }, { name: "Red Bean", pts: 515 }, { name: "Custard", pts: 525 }] },
-        { name: "Okonomiyaki", reqScore: 550, ingredients: [{ name: "Cabbage", pts: 555 }, { name: "Batter", pts: 565 }, { name: "Bonito Flakes", pts: 575 }] },
-        { name: "Kimbap", reqScore: 600, ingredients: [{ name: "Seaweed", pts: 605 }, { name: "Rice", pts: 615 }, { name: "Radish", pts: 625 }] },
-        { name: "Hotteok", reqScore: 650, ingredients: [{ name: "Dough", pts: 655 }, { name: "Sugar", pts: 665 }, { name: "Cinnamon", pts: 675 }] },
-        { name: "Tteokbokki", reqScore: 700, ingredients: [{ name: "Rice Cakes", pts: 705 }, { name: "Gochujang", pts: 715 }, { name: "Fish Cakes", pts: 725 }] },
-        { name: "Jianbing", reqScore: 750, ingredients: [{ name: "Crepe", pts: 755 }, { name: "Egg", pts: 765 }, { name: "Wonton", pts: 775 }] },
-        { name: "Spring Rolls", reqScore: 800, ingredients: [{ name: "Rice Paper", pts: 805 }, { name: "Shrimp", pts: 815 }, { name: "Herbs", pts: 825 }] },
-        { name: "Lumpia", reqScore: 850, ingredients: [{ name: "Wrapper", pts: 855 }, { name: "Pork", pts: 865 }, { name: "Carrots", pts: 875 }] },
-        { name: "Egg Waffle", reqScore: 900, ingredients: [{ name: "Egg Batter", pts: 905 }, { name: "Sugar", pts: 915 }, { name: "Condensed Milk", pts: 925 }] },
-        { name: "Stinky Tofu", reqScore: 1000, ingredients: [{ name: "Fermented Tofu", pts: 1005 }, { name: "Garlic", pts: 1015 }, { name: "Chili Sauce", pts: 1025 }] }
+        { name: "Ramen", reqScore: 0, ingredients: ["Noodles", "Broth", "Egg"] },
+        { name: "Pad Thai", reqScore: 50, ingredients: ["Rice Noodles", "Peanuts", "Tofu"] },
+        { name: "Takoyaki", reqScore: 100, ingredients: ["Octopus", "Batter", "Mayo"] },
+        { name: "Bao Buns", reqScore: 150, ingredients: ["Pork", "Steamed Bun", "Hoisin"] },
+        { name: "Dim Sum", reqScore: 200, ingredients: ["Wrapper", "Shrimp", "Chili Oil"] },
+        { name: "Tanghulu", reqScore: 250, ingredients: ["Strawberries", "Sugar", "Skewer"] },
+        { name: "Boba Tea", reqScore: 300, ingredients: ["Tapioca", "Milk Tea", "Ice"] },
+        { name: "Satay Skewers", reqScore: 350, ingredients: ["Chicken", "Peanut Sauce", "Cucumber"] },
+        { name: "Gyoza", reqScore: 400, ingredients: ["Minced Meat", "Cabbage", "Soy Sauce"] },
+        { name: "Banh Mi", reqScore: 450, ingredients: ["Baguette", "Pate", "Pickled Veg"] },
+        { name: "Taiyaki", reqScore: 500, ingredients: ["Waffle Batter", "Red Bean", "Custard"] },
+        { name: "Okonomiyaki", reqScore: 550, ingredients: ["Cabbage", "Batter", "Bonito Flakes"] },
+        { name: "Kimbap", reqScore: 600, ingredients: ["Seaweed", "Rice", "Radish"] },
+        { name: "Hotteok", reqScore: 650, ingredients: ["Dough", "Sugar", "Cinnamon"] },
+        { name: "Tteokbokki", reqScore: 700, ingredients: ["Rice Cakes", "Gochujang", "Fish Cakes"] },
+        { name: "Jianbing", reqScore: 750, ingredients: ["Crepe", "Egg", "Wonton"] },
+        { name: "Spring Rolls", reqScore: 800, ingredients: ["Rice Paper", "Shrimp", "Herbs"] },
+        { name: "Lumpia", reqScore: 850, ingredients: ["Wrapper", "Pork", "Carrots"] },
+        { name: "Egg Waffle", reqScore: 900, ingredients: ["Egg Batter", "Sugar", "Condensed Milk"] },
+        { name: "Stinky Tofu", reqScore: 1000, ingredients: ["Fermented Tofu", "Garlic", "Chili Sauce"] }
     ];
 
     let score = 0;
@@ -274,23 +273,21 @@
         selectedTableForPrep = t;
         selectedIngredients = [];
         
-        document.getElementById("prep-instruction").innerText = `Preparing ${t.order.name} for Table ${tableId}. Click required ingredients to add:`;
+        document.getElementById("prep-instruction").innerText = `Preparing ${t.order.name} for Table ${tableId}. Click all 3 ingredients:`;
         
         // SHOW RECIPE INFO
-        const reqNames = t.order.ingredients.map(i => i.name).join(" + ");
+        const reqNames = t.order.ingredients.join(" + ");
         document.getElementById("required-ingredients-text").innerText = `Required Ingredients for ${t.order.name}: [ ${reqNames} ]`;
         document.getElementById("recipe-info-box").style.display = "block";
 
         const container = document.getElementById("ingredient-list");
         container.innerHTML = "";
 
-        t.order.ingredients.forEach(ing => {
+        t.order.ingredients.forEach(ingName => {
             const btn = document.createElement("button");
             btn.className = "ingredient-btn";
-            const isUnlocked = score >= ing.pts;
-            btn.disabled = !isUnlocked;
-            btn.innerText = isUnlocked ? `✔️ ${ing.name}` : `🔒 ${ing.name} (${ing.pts} pts)`;
-            btn.onclick = () => toggleIngredient(ing.name, btn);
+            btn.innerText = `➕ ${ingName}`;
+            btn.onclick = () => toggleIngredient(ingName, btn);
             container.appendChild(btn);
         });
 
@@ -316,12 +313,12 @@
 
         if (!selectedTableForPrep) return;
 
-        const reqIngs = selectedTableForPrep.order.ingredients.map(i => i.name);
+        const reqIngs = selectedTableForPrep.order.ingredients;
         const hasAll = reqIngs.every(i => selectedIngredients.includes(i));
 
         if (!hasAll) {
             document.getElementById("log").style.color = "#ff0055";
-            document.getElementById("log").innerText = "⚠️ Select all required ingredients for " + selectedTableForPrep.order.name + "!";
+            document.getElementById("log").innerText = "⚠️ Select all 3 required ingredients for " + selectedTableForPrep.order.name + "!";
             return;
         }
 
