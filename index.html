@@ -84,7 +84,6 @@
         .btn:hover { background: #ffda79; color: #000; }
         .btn-clean { background: #00f0ff; color: #000; display: none; margin: 10px auto 0 auto; }
 
-        /* PREPARATION AREA WITH INFO */
         .prep-area {
             background: #250a3c;
             border: 2px solid #ffda79;
@@ -142,7 +141,7 @@
 
 <div class="game-container">
     <h1>⛩️ ASIAN STREET CAFELAND 🏮</h1>
-    <p style="color: #00f0ff; margin-bottom: 10px;">Prepare required ingredients & unlock Asian Street Foods with score!</p>
+    <p style="color: #00f0ff; margin-bottom: 10px;">Select required ingredients & unlock new Asian Street Foods with points!</p>
 
     <div class="score-bar">
         <span>💰 Score: <span id="score" style="color: #00f0ff;">0</span> pts</span>
@@ -161,7 +160,7 @@
         <div class="tables-area" id="tables-container"></div>
     </div>
 
-    <!-- PREPARATION & INGREDIENT AREA -->
+    <!-- PREPARATION AREA -->
     <div class="prep-area">
         <h3 style="margin:2px; color:#ffda79;">🥢 Food Preparation Station</h3>
         <p id="prep-instruction" style="font-size: 13px; color: #00f0ff;">Select a table order to view recipe info & prepare ingredients.</p>
@@ -275,7 +274,6 @@
         
         document.getElementById("prep-instruction").innerText = `Preparing ${t.order.name} for Table ${tableId}. Click all 3 ingredients:`;
         
-        // SHOW RECIPE INFO
         const reqNames = t.order.ingredients.join(" + ");
         document.getElementById("required-ingredients-text").innerText = `Required Ingredients for ${t.order.name}: [ ${reqNames} ]`;
         document.getElementById("recipe-info-box").style.display = "block";
@@ -283,6 +281,7 @@
         const container = document.getElementById("ingredient-list");
         container.innerHTML = "";
 
+        // TÜM MALZEMELER KİLİTSİZ VE DEREKT SEÇİLEBİLİR DUMURDA
         t.order.ingredients.forEach(ingName => {
             const btn = document.createElement("button");
             btn.className = "ingredient-btn";
@@ -318,7 +317,7 @@
 
         if (!hasAll) {
             document.getElementById("log").style.color = "#ff0055";
-            document.getElementById("log").innerText = "⚠️ Select all 3 required ingredients for " + selectedTableForPrep.order.name + "!";
+            document.getElementById("log").innerText = "⚠️ Select all 3 ingredients for " + selectedTableForPrep.order.name + "!";
             return;
         }
 
