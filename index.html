@@ -35,7 +35,6 @@
             margin-bottom: 15px;
         }
 
-        /* CAFELAND STYLE FLOOR PLAN */
         .cafe-floor {
             background: linear-gradient(45deg, #2c163f 25%, #231034 25%, #231034 50%, #2c163f 50%, #2c163f 75%, #231034 75%, #231034 100%);
             background-size: 40px 40px;
@@ -83,9 +82,8 @@
             margin-top: 5px;
         }
         .btn:hover { background: #ffda79; color: #000; }
-        .btn-clean { background: #00f0ff; color: #000; }
+        .btn-clean { background: #00f0ff; color: #000; display: none; margin: 10px auto 0 auto; }
 
-        /* MENU GRID */
         .menu-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -112,25 +110,22 @@
 
 <div class="game-container">
     <h1>⛩️ ASIAN STREET CAFELAND 🏮</h1>
-    <p style="color: #00f0ff; margin-bottom: 10px;">Serve 5 dishes to dirty kitchen & clean tables after every customer!</p>
+    <p style="color: #00f0ff; margin-bottom: 10px;">Serve 5 dishes to trigger kitchen cleaning. Clean tables after each customer!</p>
 
     <div class="score-bar">
         <span>💰 Score: <span id="score" style="color: #00f0ff;">0</span> pts</span>
-        <span>🍳 Dished Served: <span id="dish-count" style="color: #ffda79;">0/5</span></span>
+        <span>🍳 Dished Served: <span id="dish-count" style="color: #ffda79;">0 / 5</span></span>
         <span>👨‍🍳 Kitchen: <span id="kitchen-status" style="color: #1dd1a1;">Clean</span></span>
     </div>
 
-    <!-- CAFELAND FLOOR PLAN -->
     <div class="cafe-floor">
-        <!-- KITCHEN -->
         <div class="kitchen-area">
             <h3>🍳 Kitchen</h3>
             <div class="chef-icon">👨‍🍳</div>
             <p style="font-size: 12px; color: #ffda79;">Master Chef Lee</p>
-            <button class="btn btn-clean" id="kitchen-clean-btn" style="display:none;" onclick="cleanKitchen()">🧹 Clean Kitchen (+15 pts)</button>
+            <button class="btn btn-clean" id="kitchen-clean-btn" onclick="cleanKitchen()">🧹 Clean Kitchen (+15 pts)</button>
         </div>
 
-        <!-- DINING AREA WITH TABLES & CHAIRS -->
         <div class="tables-area" id="tables-container"></div>
     </div>
 
@@ -142,26 +137,26 @@
 
 <script>
     const streetFoods = [
-        { name: "Ramen", reqScore: 0, ingredients: ["Noodles", "Broth", "Egg"] },
-        { name: "Pad Thai", reqScore: 40, ingredients: ["Rice Noodles", "Peanuts"] },
-        { name: "Takoyaki", reqScore: 80, ingredients: ["Octopus", "Batter"] },
-        { name: "Bao Buns", reqScore: 120, ingredients: ["Pork", "Steamed Bun"] },
-        { name: "Dim Sum", reqScore: 160, ingredients: ["Dumpling Wrapper", "Shrimp"] },
-        { name: "Tanghulu", reqScore: 200, ingredients: ["Strawberries", "Sugar"] },
-        { name: "Boba Tea", reqScore: 240, ingredients: ["Tapioca", "Milk Tea"] },
-        { name: "Satay Skewers", reqScore: 280, ingredients: ["Chicken", "Peanut Sauce"] },
-        { name: "Gyoza", reqScore: 320, ingredients: ["Meat", "Soy Sauce"] },
-        { name: "Banh Mi", reqScore: 360, ingredients: ["Baguette", "Pate"] },
-        { name: "Taiyaki", reqScore: 400, ingredients: ["Waffle Batter", "Red Bean"] },
-        { name: "Okonomiyaki", reqScore: 440, ingredients: ["Cabbage", "Bonito Flakes"] },
-        { name: "Kimbap", reqScore: 480, ingredients: ["Seaweed", "Rice"] },
-        { name: "Hotteok", reqScore: 520, ingredients: ["Dough", "Brown Sugar"] },
-        { name: "Tteokbokki", reqScore: 560, ingredients: ["Rice Cakes", "Gochujang"] },
-        { name: "Jianbing", reqScore: 600, ingredients: ["Crepe", "Egg"] },
-        { name: "Spring Rolls", reqScore: 640, ingredients: ["Rice Paper", "Shrimp"] },
-        { name: "Lumpia", reqScore: 680, ingredients: ["Wrapper", "Pork"] },
-        { name: "Egg Waffle", reqScore: 720, ingredients: ["Batter", "Sugar"] },
-        { name: "Stinky Tofu", reqScore: 800, ingredients: ["Fermented Tofu", "Chili"] }
+        { name: "Ramen", reqScore: 0 },
+        { name: "Pad Thai", reqScore: 40 },
+        { name: "Takoyaki", reqScore: 80 },
+        { name: "Bao Buns", reqScore: 120 },
+        { name: "Dim Sum", reqScore: 160 },
+        { name: "Tanghulu", reqScore: 200 },
+        { name: "Boba Tea", reqScore: 240 },
+        { name: "Satay Skewers", reqScore: 280 },
+        { name: "Gyoza", reqScore: 320 },
+        { name: "Banh Mi", reqScore: 360 },
+        { name: "Taiyaki", reqScore: 400 },
+        { name: "Okonomiyaki", reqScore: 440 },
+        { name: "Kimbap", reqScore: 480 },
+        { name: "Hotteok", reqScore: 520 },
+        { name: "Tteokbokki", reqScore: 560 },
+        { name: "Jianbing", reqScore: 600 },
+        { name: "Spring Rolls", reqScore: 640 },
+        { name: "Lumpia", reqScore: 680 },
+        { name: "Egg Waffle", reqScore: 720 },
+        { name: "Stinky Tofu", reqScore: 800 }
     ];
 
     let score = 0;
@@ -198,7 +193,7 @@
                 content += `<small style="color:#00f0ff;">Select dish below!</small>`;
             } else if (table.status === "dirty") {
                 content += `<span style="font-size:14px; color:#ff0055;">🧽 Dirty Table</span><br>`;
-                content += `<button class="btn btn-clean" style="font-size:10px;" onclick="cleanTable(${table.id})">🧽 Clean Table (+15 pts)</button>`;
+                content += `<button class="btn" style="background:#00f0ff; color:#000; font-size:10px;" onclick="cleanTable(${table.id})">🧽 Clean Table (+15 pts)</button>`;
             }
 
             box.innerHTML = content;
@@ -228,7 +223,7 @@
     function serveFood(food) {
         if (isKitchenDirty) {
             document.getElementById("log").style.color = "#ff0055";
-            document.getElementById("log").innerText = "⚠️ Kitchen is too dirty after 5 dishes! Clean kitchen first.";
+            document.getElementById("log").innerText = "⚠️ Kitchen is dirty after 5 dishes! Clean kitchen first.";
             return;
         }
 
@@ -243,23 +238,23 @@
         score += 25;
         servedCount++;
         
-        // CUSTOMER LEAVES & TABLE GETS DIRTY
+        // Müşteri kalkar, MASA KİRLENİR
         activeTable.status = "dirty";
         activeTable.customer = null;
         activeTable.order = null;
         
-        // CHECK 5 DISHES RULE FOR KITCHEN
+        // 5 YEMEK KURALI - MUTFAK KİRLENİR VE TEMİZLE BUTONU AÇILIR
         if (servedCount >= 5) {
             isKitchenDirty = true;
-            document.getElementById("kitchen-status").innerText = "Dirty (Clean Needed)";
+            document.getElementById("kitchen-status").innerText = "Dirty!";
             document.getElementById("kitchen-status").style.color = "#ff0055";
             document.getElementById("kitchen-clean-btn").style.display = "block";
         }
 
         document.getElementById("score").innerText = score;
-        document.getElementById("dish-count").innerText = `${servedCount}/5`;
+        document.getElementById("dish-count").innerText = `${servedCount} / 5`;
         document.getElementById("log").style.color = "#1dd1a1";
-        document.getElementById("log").innerText = ` Served ${food.name} to Table ${activeTable.id} (+25 pts)! Table needs cleaning now.`;
+        document.getElementById("log").innerText = ` Served ${food.name} (+25 pts)! Clean Table ${activeTable.id} for new customer.`;
         
         renderTables();
         renderMenu();
@@ -271,7 +266,7 @@
         score += 15;
         document.getElementById("score").innerText = score;
         document.getElementById("log").style.color = "#00f0ff";
-        document.getElementById("log").innerText = `🧽 Table ${tableId} cleaned! Ready for new customers (+15 pts).`;
+        document.getElementById("log").innerText = `🧽 Table ${tableId} cleaned (+15 pts)! Ready for new customer.`;
         renderTables();
         renderMenu();
     }
@@ -281,12 +276,12 @@
         isKitchenDirty = false;
         score += 15;
         document.getElementById("score").innerText = score;
-        document.getElementById("dish-count").innerText = `0/5`;
+        document.getElementById("dish-count").innerText = `0 / 5`;
         document.getElementById("kitchen-status").innerText = "Clean";
         document.getElementById("kitchen-status").style.color = "#1dd1a1";
         document.getElementById("kitchen-clean-btn").style.display = "none";
         document.getElementById("log").style.color = "#ffda79";
-        document.getElementById("log").innerText = "🍳 Kitchen thoroughly cleaned! Cook can make 5 more dishes (+15 pts).";
+        document.getElementById("log").innerText = "🍳 Kitchen cleaned! Chef Lee can now prepare 5 more dishes (+15 pts).";
         renderMenu();
     }
 
