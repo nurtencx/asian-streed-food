@@ -29,7 +29,7 @@
             background: #2a123d;
             padding: 10px;
             border-radius: 8px;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             border: 1px solid #00f0ff;
             margin-bottom: 15px;
@@ -63,10 +63,10 @@
             border: 2px solid #00f0ff;
             border-radius: 10px;
             padding: 10px;
-            min-height: 90px;
+            min-height: 95px;
             position: relative;
         }
-        .table-dirty { border-color: #ff0055; background: rgba(255, 0, 85, 0.1); }
+        .table-dirty { border-color: #ff0055; background: rgba(255, 0, 85, 0.15); }
         .table-occupied { border-color: #ffda79; }
 
         .chef-icon { font-size: 30px; animation: cook 1.5s infinite alternate; }
@@ -112,11 +112,12 @@
 
 <div class="game-container">
     <h1>⛩️ ASIAN STREET CAFELAND 🏮</h1>
-    <p style="color: #00f0ff; margin-bottom: 10px;">Serve customers at your Asian Night Market Cafe!</p>
+    <p style="color: #00f0ff; margin-bottom: 10px;">Serve 5 dishes to dirty kitchen & clean tables after every customer!</p>
 
     <div class="score-bar">
         <span>💰 Score: <span id="score" style="color: #00f0ff;">0</span> pts</span>
-        <span>👨‍🍳 Chef Status: <span style="color: #ffda79;">Cooking</span></span>
+        <span>🍳 Dished Served: <span id="dish-count" style="color: #ffda79;">0/5</span></span>
+        <span>👨‍🍳 Kitchen: <span id="kitchen-status" style="color: #1dd1a1;">Clean</span></span>
     </div>
 
     <!-- CAFELAND FLOOR PLAN -->
@@ -126,13 +127,11 @@
             <h3>🍳 Kitchen</h3>
             <div class="chef-icon">👨‍🍳</div>
             <p style="font-size: 12px; color: #ffda79;">Master Chef Lee</p>
-            <button class="btn btn-clean" onclick="cleanKitchen()">🧹 Clean Kitchen (+15 pts)</button>
+            <button class="btn btn-clean" id="kitchen-clean-btn" style="display:none;" onclick="cleanKitchen()">🧹 Clean Kitchen (+15 pts)</button>
         </div>
 
         <!-- DINING AREA WITH TABLES & CHAIRS -->
-        <div class="tables-area" id="tables-container">
-            <!-- Tables will be generated here -->
-        </div>
+        <div class="tables-area" id="tables-container"></div>
     </div>
 
     <h3>📜 Asian Street Foods Menu (20 Items):</h3>
@@ -166,7 +165,8 @@
     ];
 
     let score = 0;
-    let selectedTable = null;
+    let servedCount = 0;
+    let isKitchenDirty = false;
 
     const tables = [
         { id: 1, status: "empty", customer: null, order: null },
@@ -185,19 +185,19 @@
             const box = document.createElement("div");
             box.className = `table-box ${table.status === 'dirty' ? 'table-dirty' : ''} ${table.status === 'occupied' || table.status === 'ordered' ? 'table-occupied' : ''}`;
             
-            let content = `<small style="color:#00f0ff;">Table ${table.id}</id></small><br>`;
-            content += `<span style="font-size:20px;">🪑🍽️🪑</span><br>`;
+            let content = `<small style="color:#00f0ff;">Table ${table.id}</small><br>`;
+            content += `<span style="font-size:18px;">🪑🍽️🪑</span><br>`;
 
             if (table.status === "empty") {
                 content += `<button class="btn" style="font-size:10px;" onclick="seatCustomer(${table.id})">🧍 Seat Customer</button>`;
             } else if (table.status === "occupied") {
-                content += `<span style="font-size:22px;">${table.customer}</span><br>`;
+                content += `<span style="font-size:20px;">${table.customer}</span><br>`;
                 content += `<button class="btn" style="font-size:10px; background:#ffda79; color:#000;" onclick="takeOrder(${table.id})">📋 Take Order</button>`;
             } else if (table.status === "ordered") {
-                content += `<span style="font-size:20px;">${table.customer}</span> <small style="color:#ffda79;">Wants: <b>${table.order.name}</b></small><br>`;
-                content += `<small style="color:#00f0ff;">Select dish from menu below!</small>`;
+                content += `<span style="font-size:18px;">${table.customer}</span> <small style="color:#ffda79;">Wants: <b>${table.order.name}</b></small><br>`;
+                content += `<small style="color:#00f0ff;">Select dish below!</small>`;
             } else if (table.status === "dirty") {
-                content += `<span style="font-size:16px;">🧽 Dirty Table</span><br>`;
+                content += `<span style="font-size:14px; color:#ff0055;">🧽 Dirty Table</span><br>`;
                 content += `<button class="btn btn-clean" style="font-size:10px;" onclick="cleanTable(${table.id})">🧽 Clean Table (+15 pts)</button>`;
             }
 
@@ -221,26 +221,45 @@
         const unlockedFoods = streetFoods.filter(f => score >= f.reqScore);
         t.order = unlockedFoods[Math.floor(Math.random() * unlockedFoods.length)];
         t.status = "ordered";
-        selectedTable = t;
         renderTables();
-        document.getElementById("log").innerText = `Table ${tableId} ordered ${t.order.name}! Click the dish in the menu to serve.`;
+        document.getElementById("log").innerText = `Table ${tableId} ordered ${t.order.name}! Click the dish in menu to serve.`;
     }
 
     function serveFood(food) {
+        if (isKitchenDirty) {
+            document.getElementById("log").style.color = "#ff0055";
+            document.getElementById("log").innerText = "⚠️ Kitchen is too dirty after 5 dishes! Clean kitchen first.";
+            return;
+        }
+
         const activeTable = tables.find(t => t.status === "ordered" && t.order.name === food.name);
         
         if (!activeTable) {
+            document.getElementById("log").style.color = "#ff0055";
             document.getElementById("log").innerText = "❌ No table currently ordered " + food.name + "!";
             return;
         }
 
         score += 25;
+        servedCount++;
+        
+        // CUSTOMER LEAVES & TABLE GETS DIRTY
         activeTable.status = "dirty";
         activeTable.customer = null;
         activeTable.order = null;
         
+        // CHECK 5 DISHES RULE FOR KITCHEN
+        if (servedCount >= 5) {
+            isKitchenDirty = true;
+            document.getElementById("kitchen-status").innerText = "Dirty (Clean Needed)";
+            document.getElementById("kitchen-status").style.color = "#ff0055";
+            document.getElementById("kitchen-clean-btn").style.display = "block";
+        }
+
         document.getElementById("score").innerText = score;
-        document.getElementById("log").innerText = ` Served ${food.name} to Table ${activeTable.id}! (+25 pts). Table needs cleaning now.`;
+        document.getElementById("dish-count").innerText = `${servedCount}/5`;
+        document.getElementById("log").style.color = "#1dd1a1";
+        document.getElementById("log").innerText = ` Served ${food.name} to Table ${activeTable.id} (+25 pts)! Table needs cleaning now.`;
         
         renderTables();
         renderMenu();
@@ -251,15 +270,23 @@
         t.status = "empty";
         score += 15;
         document.getElementById("score").innerText = score;
+        document.getElementById("log").style.color = "#00f0ff";
         document.getElementById("log").innerText = `🧽 Table ${tableId} cleaned! Ready for new customers (+15 pts).`;
         renderTables();
         renderMenu();
     }
 
     function cleanKitchen() {
+        servedCount = 0;
+        isKitchenDirty = false;
         score += 15;
         document.getElementById("score").innerText = score;
-        document.getElementById("log").innerText = "🍳 Kitchen thoroughly cleaned! (+15 pts)";
+        document.getElementById("dish-count").innerText = `0/5`;
+        document.getElementById("kitchen-status").innerText = "Clean";
+        document.getElementById("kitchen-status").style.color = "#1dd1a1";
+        document.getElementById("kitchen-clean-btn").style.display = "none";
+        document.getElementById("log").style.color = "#ffda79";
+        document.getElementById("log").innerText = "🍳 Kitchen thoroughly cleaned! Cook can make 5 more dishes (+15 pts).";
         renderMenu();
     }
 
