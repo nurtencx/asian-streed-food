@@ -14,9 +14,9 @@
             padding: 15px;
         }
         .container {
-            max-width: 650px;
+            max-width: 700px;
             margin: auto;
-            background: rgba(20, 10, 35, 0.9);
+            background: rgba(20, 10, 35, 0.95);
             border: 3px solid #ff0055;
             border-radius: 20px;
             padding: 20px;
@@ -44,21 +44,42 @@
             font-size: 15px;
             font-weight: bold;
         }
-        .order-card {
-            background: #25103a;
+        
+        /* RESTAURANT LAYOUT */
+        .restaurant-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            background: #15072b;
             border: 2px solid #00f0ff;
             border-radius: 12px;
             padding: 15px;
             margin-bottom: 15px;
-            box-shadow: 0 0 10px #00f0ff;
         }
-        .ingredients-box {
-            background: #120624;
+        .section-box {
+            background: #230d3d;
             padding: 10px;
-            border-radius: 8px;
-            margin: 10px 0;
-            border: 1px dashed #ffda79;
+            border-radius: 10px;
+            border: 1px dashed #ff0055;
         }
+        .chef-avatar {
+            font-size: 35px;
+            margin: 5px;
+            display: inline-block;
+            animation: bounce 2s infinite alternate;
+        }
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-5px); }
+        }
+        .customer-card {
+            background: #2e124d;
+            border: 2px solid #ffda79;
+            border-radius: 10px;
+            padding: 10px;
+            margin-top: 5px;
+        }
+
         .action-btns {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -69,7 +90,7 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 10px;
-            max-height: 230px;
+            max-height: 200px;
             overflow-y: auto;
             padding: 5px;
         }
@@ -113,26 +134,53 @@
 
 <div class="container">
     <h1>⛩️ ASIAN STREET FOOD NIGHT MARKET 🏮</h1>
-    <p class="neon-text">✨ Neon Stall - Cook, Clean Kitchen & Tables to Unlock Foods ✨</p>
+    <p class="neon-text">✨ Neon Restaurant - Chefs, Tables, Customers & Orders ✨</p>
 
     <div class="stats-bar">
         <span>💰 Score: <br><span id="score" style="color: #00f0ff;">0</span> pts</span>
         <span>🍳 Kitchen: <br><span id="kitchen-cleanliness" style="color: #ffda79;">100%</span></span>
-        <span>🪑 Tables & Chairs: <br><span id="table-cleanliness" style="color: #1dd1a1;">100%</span></span>
+        <span>🪑 Tables: <br><span id="table-cleanliness" style="color: #1dd1a1;">100%</span></span>
     </div>
 
+    <!-- RESTAURANT VISUAL AREA -->
+    <div class="restaurant-layout">
+        <div class="section-box">
+            <h3>👨‍🍳 Kitchen & Chefs</h3>
+            <div>
+                <span class="chef-avatar" title="Head Chef Master Lee">👨‍🍳</span>
+                <span class="chef-avatar" title="Sous Chef Mei">👩‍🍳</span>
+            </div>
+            <p style="font-size: 12px; color: #ffda79;">Chefs are ready to cook!</p>
+        </div>
+
+        <div class="section-box">
+            <h3>🪑 Tables & Seating</h3>
+            <div style="font-size: 22px;">🪑 🪑 🪑 🪑</div>
+            <p id="table-status" style="font-size: 12px; color: #1dd1a1;">Tables Clean & Ready</p>
+        </div>
+    </div>
+
+    <!-- CUSTOMER & ORDER AREA -->
+    <div class="customer-card">
+        <h3>🧍 Incoming Customer:</h3>
+        <div id="customer-info">
+            <span id="customer-avatar" style="font-size: 40px;">🧑</span>
+            <p id="customer-name" style="font-weight: bold; color: #00f0ff;">Customer Arrived!</p>
+        </div>
+        
+        <button id="take-order-btn" style="background: #ffda79; color: #000; border: none; width: 100%; font-size: 15px;" onclick="takeOrder()">📋 Take Customer's Order</button>
+
+        <div id="order-details" style="display: none; margin-top: 10px;">
+            <strong style="color: #ff0055;">Ordered Dish:</strong>
+            <h2 id="current-order" style="color: #ffda79; margin: 5px 0;">-</h2>
+            <small>Ingredients: <span id="recipe-ingredients" style="color: #00f0ff;">-</span></small>
+        </div>
+    </div>
+
+    <br>
     <div class="action-btns">
         <button class="clean-btn" onclick="cleanKitchen()">🍳 Clean Kitchen (+15 pts)</button>
         <button class="clean-btn" style="background: #1dd1a1;" onclick="cleanTables()">🪑 Clean Tables & Chairs (+15 pts)</button>
-    </div>
-
-    <div class="order-card">
-        <h3>Current Customer Order:</h3>
-        <h2 id="current-order" style="color: #ff0055;">Loading...</h2>
-        <div class="ingredients-box">
-            <strong>Required Ingredients:</strong>
-            <p id="recipe-ingredients" style="color: #ffda79;">-</p>
-        </div>
     </div>
 
     <h3> Asian Street Foods Menu (20 Dishes):</h3>
@@ -142,6 +190,14 @@
 </div>
 
 <script>
+    const customers = [
+        { name: "Kenji (Tourist)", avatar: "👨‍🌾" },
+        { name: "Lin (Local Foodie)", avatar: "👩" },
+        { name: "Hiro (Night Market Visitor)", avatar: "🧑" },
+        { name: "Yuki (Student)", avatar: "👧" },
+        { name: "Sora (Chef Enthusiast)", avatar: "🧔" }
+    ];
+
     const streetFoods = [
         { name: "Ramen", reqScore: 0, ingredients: ["Noodles", "Broth", "Egg"] },
         { name: "Pad Thai", reqScore: 50, ingredients: ["Rice Noodles", "Peanuts", "Tofu"] },
@@ -169,6 +225,30 @@
     let kitchenCleanliness = 100;
     let tableCleanliness = 100;
     let currentOrder = null;
+    let orderTaken = false;
+
+    function spawnCustomer() {
+        const randomCust = customers[Math.floor(Math.random() * customers.length)];
+        document.getElementById("customer-avatar").innerText = randomCust.avatar;
+        document.getElementById("customer-name").innerText = randomCust.name + " sat at Table 1!";
+        
+        const unlockedFoods = streetFoods.filter(f => score >= f.reqScore);
+        currentOrder = unlockedFoods[Math.floor(Math.random() * unlockedFoods.length)];
+        
+        orderTaken = false;
+        document.getElementById("take-order-btn").style.display = "block";
+        document.getElementById("order-details").style.display = "none";
+    }
+
+    function takeOrder() {
+        orderTaken = true;
+        document.getElementById("take-order-btn").style.display = "none";
+        document.getElementById("order-details").style.display = "block";
+        document.getElementById("current-order").innerText = currentOrder.name;
+        document.getElementById("recipe-ingredients").innerText = currentOrder.ingredients.join(" + ");
+        document.getElementById("log").style.color = "#00f0ff";
+        document.getElementById("log").innerText = "📋 Order taken! Select dish from menu to serve.";
+    }
 
     function initMenu() {
         const grid = document.getElementById("menu-grid");
@@ -184,37 +264,35 @@
         });
     }
 
-    function generateOrder() {
-        const unlockedFoods = streetFoods.filter(f => score >= f.reqScore);
-        currentOrder = unlockedFoods[Math.floor(Math.random() * unlockedFoods.length)];
-        document.getElementById("current-order").innerText = currentOrder.name;
-        document.getElementById("recipe-ingredients").innerText = currentOrder.ingredients.join(" + ");
-    }
-
     function serveFood(food) {
         const log = document.getElementById("log");
+        if (!orderTaken) {
+            log.style.color = "#ff0055";
+            log.innerText = "⚠️ Take customer's order first!";
+            return;
+        }
         if (kitchenCleanliness <= 10) {
             log.style.color = "#ff0055";
-            log.innerText = "⚠️ Kitchen is too dirty! Clean it first to cook.";
+            log.innerText = "⚠️ Kitchen too dirty! Clean kitchen first.";
             return;
         }
         if (tableCleanliness <= 10) {
             log.style.color = "#ff0055";
-            log.innerText = "⚠️ Tables & chairs are dirty! Clean them so customers can sit.";
+            log.innerText = "⚠️ Tables too dirty! Clean tables first.";
             return;
         }
 
         if (food.name === currentOrder.name) {
-            score += 20;
+            score += 25;
             kitchenCleanliness = Math.max(0, kitchenCleanliness - 10);
             tableCleanliness = Math.max(0, tableCleanliness - 15);
-            log.style.color = "#00f0ff";
-            log.innerText = ` Perfect! Served ${food.name} (+20 pts). Kitchen & tables got dirty.`;
+            log.style.color = "#1dd1a1";
+            log.innerText = ` Perfect! Master Lee cooked ${food.name}. Served (+25 pts)!`;
             updateGame();
-            generateOrder();
+            spawnCustomer();
         } else {
             log.style.color = "#ff0055";
-            log.innerText = "❌ Wrong dish! Customer left unsatisfied.";
+            log.innerText = "❌ Wrong dish served!";
         }
     }
 
@@ -238,11 +316,12 @@
         document.getElementById("score").innerText = score;
         document.getElementById("kitchen-cleanliness").innerText = kitchenCleanliness + "%";
         document.getElementById("table-cleanliness").innerText = tableCleanliness + "%";
+        document.getElementById("table-status").innerText = tableCleanliness > 30 ? "Tables Clean & Ready" : "⚠️ Tables Need Cleaning";
         initMenu();
     }
 
     initMenu();
-    generateOrder();
+    spawnCustomer();
 </script>
 
 </body>
