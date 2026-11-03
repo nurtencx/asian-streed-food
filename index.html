@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asian Street Food Stall</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a0826;
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .game-card {
+            background-color: #2c123e;
+            border: 3px solid #ff4b5c;
+            border-radius: 15px;
+            max-width: 450px;
+            margin: auto;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(255, 75, 92, 0.4);
+        }
+        h1 { color: #ffda79; margin-bottom: 5px; }
+        .subtitle { color: #00d2d3; font-style: italic; margin-bottom: 20px; }
+        .score-board {
+            font-size: 24px;
+            font-weight: bold;
+            background: #ff4b5c;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .customer-box {
+            background: #38194e;
+            border: 2px dashed #00d2d3;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        button {
+            background-color: #00d2d3;
+            color: #1a0826;
+            border: none;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button:hover {
+            background-color: #ffda79;
+            transform: scale(1.03);
+        }
+        #message {
+            margin-top: 15px;
+            font-weight: bold;
+            min-height: 24px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-card">
+    <h1>⛩️ Asian Street Food Stall</h1>
+    <p class="subtitle">Serve hungry customers at the night market!</p>
+    
+    <div class="score-board">
+        Score: <span id="score">0</span>
+    </div>
+
+    <div class="customer-box">
+        <h3>Current Customer Order:</h3>
+        <p id="order-text" style="font-size: 20px; color: #ffda79; font-weight: bold;">Loading order...</p>
+    </div>
+
+    <h3>Prepare Dish:</h3>
+    <div class="menu-grid">
+        <button onclick="serveDish('Ramen')">🍜 Ramen</button>
+        <button onclick="serveDish('Pad Thai')">🥡 Pad Thai</button>
+        <button onclick="serveDish('Dim Sum')">🥟 Dim Sum</button>
+        <button onclick="serveDish('Takoyaki')">🧆 Takoyaki</button>
+        <button onclick="serveDish('Bao Buns')">🥙 Bao Buns</button>
+        <button onclick="serveDish('Boba Tea')">🧋 Boba Tea</button>
+    </div>
+
+    <p id="message"></p>
+</div>
+
+<script>
+    const dishes = ['Ramen', 'Pad Thai', 'Dim Sum', 'Takoyaki', 'Bao Buns', 'Boba Tea'];
+    let currentOrder = '';
+    let score = 0;
+
+    function nextOrder() {
+        const randomIndex = Math.floor(Math.random() * dishes.length);
+        currentOrder = dishes[randomIndex];
+        document.getElementById('order-text').innerText = '1x ' + currentOrder;
+    }
+
+    function serveDish(dishName) {
+        const msg = document.getElementById('message');
+        if (dishName === currentOrder) {
+            score += 10;
+            document.getElementById('score').innerText = score;
+            msg.style.color = '#1dd1a1';
+            msg.innerText = ' Correct! Customer is happy (+10 pts)';
+            nextOrder();
+        } else {
+            msg.style.color = '#ff6b6b';
+            msg.innerText = '❌ Wrong order! Try again.';
+        }
+    }
+
+    nextOrder();
+</script>
+
+</body>
+</html>
