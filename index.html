@@ -3,325 +3,282 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asian Street Food Empire</title>
+    <title>Asian Street Food Cafe Empire</title>
     <style>
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #0d0221, #190535, #02010a);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f051d;
             color: #fff;
             text-align: center;
             margin: 0;
-            padding: 15px;
+            padding: 10px;
         }
-        .container {
-            max-width: 700px;
+        .game-container {
+            max-width: 750px;
             margin: auto;
-            background: rgba(20, 10, 35, 0.95);
+            background: #1b0a2a;
             border: 3px solid #ff0055;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 0 25px #ff0055, inset 0 0 15px #00f0ff;
-        }
-        h1 {
-            color: #ff0055;
-            text-shadow: 0 0 10px #ff0055, 0 0 20px #ff0055;
-            margin-bottom: 5px;
-        }
-        .neon-text {
-            color: #00f0ff;
-            text-shadow: 0 0 8px #00f0ff;
-            font-style: italic;
-        }
-        .stats-bar {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 10px;
-            border-radius: 10px;
-            border: 1px solid #ffda79;
-            margin: 15px 0;
-            font-size: 15px;
-            font-weight: bold;
-        }
-        
-        /* RESTAURANT LAYOUT */
-        .restaurant-layout {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            background: #15072b;
-            border: 2px solid #00f0ff;
-            border-radius: 12px;
+            border-radius: 15px;
             padding: 15px;
-            margin-bottom: 15px;
+            box-shadow: 0 0 20px #ff0055;
         }
-        .section-box {
-            background: #230d3d;
-            padding: 10px;
-            border-radius: 10px;
-            border: 1px dashed #ff0055;
-        }
-        .chef-avatar {
-            font-size: 35px;
-            margin: 5px;
-            display: inline-block;
-            animation: bounce 2s infinite alternate;
-        }
-        @keyframes bounce {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-5px); }
-        }
-        .customer-card {
-            background: #2e124d;
-            border: 2px solid #ffda79;
-            border-radius: 10px;
-            padding: 10px;
-            margin-top: 5px;
-        }
-
-        .action-btns {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            max-height: 200px;
-            overflow-y: auto;
-            padding: 5px;
-        }
-        button {
-            background: #1a0826;
-            color: #fff;
-            border: 2px solid #ff0055;
+        h1 { color: #ff0055; margin: 5px 0; text-shadow: 0 0 10px #ff0055; }
+        .score-bar {
+            display: flex;
+            justify-content: space-around;
+            background: #2a123d;
             padding: 10px;
             border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            border: 1px solid #00f0ff;
+            margin-bottom: 15px;
+        }
+
+        /* CAFELAND STYLE FLOOR PLAN */
+        .cafe-floor {
+            background: linear-gradient(45deg, #2c163f 25%, #231034 25%, #231034 50%, #2c163f 50%, #2c163f 75%, #231034 75%, #231034 100%);
+            background-size: 40px 40px;
+            border: 3px solid #ffda79;
+            border-radius: 12px;
+            padding: 15px;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .kitchen-area {
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px dashed #ff0055;
+            border-radius: 10px;
+            padding: 10px;
+        }
+        .tables-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .table-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid #00f0ff;
+            border-radius: 10px;
+            padding: 10px;
+            min-height: 90px;
+            position: relative;
+        }
+        .table-dirty { border-color: #ff0055; background: rgba(255, 0, 85, 0.1); }
+        .table-occupied { border-color: #ffda79; }
+
+        .chef-icon { font-size: 30px; animation: cook 1.5s infinite alternate; }
+        @keyframes cook { from { transform: scale(1); } to { transform: scale(1.1); } }
+
+        .btn {
+            background: #ff0055;
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
-            transition: 0.2s;
+            margin-top: 5px;
         }
-        button:hover:not(:disabled) {
-            background: #ff0055;
-            box-shadow: 0 0 10px #ff0055;
+        .btn:hover { background: #ffda79; color: #000; }
+        .btn-clean { background: #00f0ff; color: #000; }
+
+        /* MENU GRID */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            max-height: 180px;
+            overflow-y: auto;
+            background: #120520;
+            padding: 8px;
+            border-radius: 8px;
         }
-        button:disabled {
-            opacity: 0.5;
-            border-color: #555;
-            cursor: not-allowed;
+        .menu-btn {
+            background: #230d37;
+            color: #fff;
+            border: 1px solid #ff0055;
+            padding: 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
         }
-        .clean-btn {
-            background: #00f0ff;
-            color: #000;
-            border: none;
-            font-size: 14px;
-        }
-        .clean-btn:hover {
-            background: #ffda79;
-            box-shadow: 0 0 10px #ffda79;
-        }
-        #log {
-            margin-top: 10px;
-            font-weight: bold;
-            min-height: 25px;
-        }
+        .menu-btn:disabled { opacity: 0.4; border-color: #444; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>⛩️ ASIAN STREET FOOD NIGHT MARKET 🏮</h1>
-    <p class="neon-text">✨ Neon Restaurant - Chefs, Tables, Customers & Orders ✨</p>
+<div class="game-container">
+    <h1>⛩️ ASIAN STREET CAFELAND 🏮</h1>
+    <p style="color: #00f0ff; margin-bottom: 10px;">Serve customers at your Asian Night Market Cafe!</p>
 
-    <div class="stats-bar">
-        <span>💰 Score: <br><span id="score" style="color: #00f0ff;">0</span> pts</span>
-        <span>🍳 Kitchen: <br><span id="kitchen-cleanliness" style="color: #ffda79;">100%</span></span>
-        <span>🪑 Tables: <br><span id="table-cleanliness" style="color: #1dd1a1;">100%</span></span>
+    <div class="score-bar">
+        <span>💰 Score: <span id="score" style="color: #00f0ff;">0</span> pts</span>
+        <span>👨‍🍳 Chef Status: <span style="color: #ffda79;">Cooking</span></span>
     </div>
 
-    <!-- RESTAURANT VISUAL AREA -->
-    <div class="restaurant-layout">
-        <div class="section-box">
-            <h3>👨‍🍳 Kitchen & Chefs</h3>
-            <div>
-                <span class="chef-avatar" title="Head Chef Master Lee">👨‍🍳</span>
-                <span class="chef-avatar" title="Sous Chef Mei">👩‍🍳</span>
-            </div>
-            <p style="font-size: 12px; color: #ffda79;">Chefs are ready to cook!</p>
+    <!-- CAFELAND FLOOR PLAN -->
+    <div class="cafe-floor">
+        <!-- KITCHEN -->
+        <div class="kitchen-area">
+            <h3>🍳 Kitchen</h3>
+            <div class="chef-icon">👨‍🍳</div>
+            <p style="font-size: 12px; color: #ffda79;">Master Chef Lee</p>
+            <button class="btn btn-clean" onclick="cleanKitchen()">🧹 Clean Kitchen (+15 pts)</button>
         </div>
 
-        <div class="section-box">
-            <h3>🪑 Tables & Seating</h3>
-            <div style="font-size: 22px;">🪑 🪑 🪑 🪑</div>
-            <p id="table-status" style="font-size: 12px; color: #1dd1a1;">Tables Clean & Ready</p>
+        <!-- DINING AREA WITH TABLES & CHAIRS -->
+        <div class="tables-area" id="tables-container">
+            <!-- Tables will be generated here -->
         </div>
     </div>
 
-    <!-- CUSTOMER & ORDER AREA -->
-    <div class="customer-card">
-        <h3>🧍 Incoming Customer:</h3>
-        <div id="customer-info">
-            <span id="customer-avatar" style="font-size: 40px;">🧑</span>
-            <p id="customer-name" style="font-weight: bold; color: #00f0ff;">Customer Arrived!</p>
-        </div>
-        
-        <button id="take-order-btn" style="background: #ffda79; color: #000; border: none; width: 100%; font-size: 15px;" onclick="takeOrder()">📋 Take Customer's Order</button>
+    <h3>📜 Asian Street Foods Menu (20 Items):</h3>
+    <div class="menu-grid" id="menu-grid"></div>
 
-        <div id="order-details" style="display: none; margin-top: 10px;">
-            <strong style="color: #ff0055;">Ordered Dish:</strong>
-            <h2 id="current-order" style="color: #ffda79; margin: 5px 0;">-</h2>
-            <small>Ingredients: <span id="recipe-ingredients" style="color: #00f0ff;">-</span></small>
-        </div>
-    </div>
-
-    <br>
-    <div class="action-btns">
-        <button class="clean-btn" onclick="cleanKitchen()">🍳 Clean Kitchen (+15 pts)</button>
-        <button class="clean-btn" style="background: #1dd1a1;" onclick="cleanTables()">🪑 Clean Tables & Chairs (+15 pts)</button>
-    </div>
-
-    <h3> Asian Street Foods Menu (20 Dishes):</h3>
-    <div class="grid" id="menu-grid"></div>
-
-    <p id="log"></p>
+    <p id="log" style="font-weight: bold; min-height: 20px; color: #ffda79; margin-top: 10px;"></p>
 </div>
 
 <script>
-    const customers = [
-        { name: "Kenji (Tourist)", avatar: "👨‍🌾" },
-        { name: "Lin (Local Foodie)", avatar: "👩" },
-        { name: "Hiro (Night Market Visitor)", avatar: "🧑" },
-        { name: "Yuki (Student)", avatar: "👧" },
-        { name: "Sora (Chef Enthusiast)", avatar: "🧔" }
-    ];
-
     const streetFoods = [
         { name: "Ramen", reqScore: 0, ingredients: ["Noodles", "Broth", "Egg"] },
-        { name: "Pad Thai", reqScore: 50, ingredients: ["Rice Noodles", "Peanuts", "Tofu"] },
-        { name: "Takoyaki", reqScore: 100, ingredients: ["Octopus", "Batter", "Mayo"] },
-        { name: "Bao Buns", reqScore: 150, ingredients: ["Pork", "Steamed Bun", "Hoisin"] },
-        { name: "Dim Sum", reqScore: 200, ingredients: ["Dumpling Wrapper", "Shrimp", "Chili Oil"] },
-        { name: "Tanghulu", reqScore: 250, ingredients: ["Strawberries", "Sugar Syrup", "Skewer"] },
-        { name: "Boba Tea", reqScore: 300, ingredients: ["Tapioca Pearls", "Milk Tea", "Ice"] },
-        { name: "Satay Skewers", reqScore: 350, ingredients: ["Chicken", "Peanut Sauce", "Cucumber"] },
-        { name: "Gyoza", reqScore: 400, ingredients: ["Minced Meat", "Cabbage", "Soy Sauce"] },
-        { name: "Banh Mi", reqScore: 450, ingredients: ["Baguette", "Pate", "Pickled Veggies"] },
-        { name: "Taiyaki", reqScore: 500, ingredients: ["Waffle Batter", "Red Bean Paste", "Custard"] },
-        { name: "Okonomiyaki", reqScore: 550, ingredients: ["Cabbage", "Batter", "Bonito Flakes"] },
-        { name: "Kimbap", reqScore: 600, ingredients: ["Seaweed", "Rice", "Pickled Radish"] },
-        { name: "Hotteok", reqScore: 650, ingredients: ["Sweet Dough", "Brown Sugar", "Cinnamon"] },
-        { name: "Tteokbokki", reqScore: 700, ingredients: ["Rice Cakes", "Gochujang", "Fish Cakes"] },
-        { name: "Jianbing", reqScore: 750, ingredients: ["Crepe", "Egg", "Crispy Wonton"] },
-        { name: "Spring Rolls", reqScore: 800, ingredients: ["Rice Paper", "Shrimp", "Herbs"] },
-        { name: "Lumpia", reqScore: 850, ingredients: ["Spring Roll Wrapper", "Pork", "Carrots"] },
-        { name: "Egg Waffle", reqScore: 900, ingredients: ["Egg Batter", "Sugar", "Condensed Milk"] },
-        { name: "Stinky Tofu", reqScore: 1000, ingredients: ["Fermented Tofu", "Garlic", "Chili Sauce"] }
+        { name: "Pad Thai", reqScore: 40, ingredients: ["Rice Noodles", "Peanuts"] },
+        { name: "Takoyaki", reqScore: 80, ingredients: ["Octopus", "Batter"] },
+        { name: "Bao Buns", reqScore: 120, ingredients: ["Pork", "Steamed Bun"] },
+        { name: "Dim Sum", reqScore: 160, ingredients: ["Dumpling Wrapper", "Shrimp"] },
+        { name: "Tanghulu", reqScore: 200, ingredients: ["Strawberries", "Sugar"] },
+        { name: "Boba Tea", reqScore: 240, ingredients: ["Tapioca", "Milk Tea"] },
+        { name: "Satay Skewers", reqScore: 280, ingredients: ["Chicken", "Peanut Sauce"] },
+        { name: "Gyoza", reqScore: 320, ingredients: ["Meat", "Soy Sauce"] },
+        { name: "Banh Mi", reqScore: 360, ingredients: ["Baguette", "Pate"] },
+        { name: "Taiyaki", reqScore: 400, ingredients: ["Waffle Batter", "Red Bean"] },
+        { name: "Okonomiyaki", reqScore: 440, ingredients: ["Cabbage", "Bonito Flakes"] },
+        { name: "Kimbap", reqScore: 480, ingredients: ["Seaweed", "Rice"] },
+        { name: "Hotteok", reqScore: 520, ingredients: ["Dough", "Brown Sugar"] },
+        { name: "Tteokbokki", reqScore: 560, ingredients: ["Rice Cakes", "Gochujang"] },
+        { name: "Jianbing", reqScore: 600, ingredients: ["Crepe", "Egg"] },
+        { name: "Spring Rolls", reqScore: 640, ingredients: ["Rice Paper", "Shrimp"] },
+        { name: "Lumpia", reqScore: 680, ingredients: ["Wrapper", "Pork"] },
+        { name: "Egg Waffle", reqScore: 720, ingredients: ["Batter", "Sugar"] },
+        { name: "Stinky Tofu", reqScore: 800, ingredients: ["Fermented Tofu", "Chili"] }
     ];
 
     let score = 0;
-    let kitchenCleanliness = 100;
-    let tableCleanliness = 100;
-    let currentOrder = null;
-    let orderTaken = false;
+    let selectedTable = null;
 
-    function spawnCustomer() {
-        const randomCust = customers[Math.floor(Math.random() * customers.length)];
-        document.getElementById("customer-avatar").innerText = randomCust.avatar;
-        document.getElementById("customer-name").innerText = randomCust.name + " sat at Table 1!";
-        
+    const tables = [
+        { id: 1, status: "empty", customer: null, order: null },
+        { id: 2, status: "empty", customer: null, order: null },
+        { id: 3, status: "empty", customer: null, order: null },
+        { id: 4, status: "empty", customer: null, order: null }
+    ];
+
+    const customerAvatars = ["🧑", "👩", "🧔", "👧", "👨‍🌾"];
+
+    function renderTables() {
+        const container = document.getElementById("tables-container");
+        container.innerHTML = "";
+
+        tables.forEach(table => {
+            const box = document.createElement("div");
+            box.className = `table-box ${table.status === 'dirty' ? 'table-dirty' : ''} ${table.status === 'occupied' || table.status === 'ordered' ? 'table-occupied' : ''}`;
+            
+            let content = `<small style="color:#00f0ff;">Table ${table.id}</id></small><br>`;
+            content += `<span style="font-size:20px;">🪑🍽️🪑</span><br>`;
+
+            if (table.status === "empty") {
+                content += `<button class="btn" style="font-size:10px;" onclick="seatCustomer(${table.id})">🧍 Seat Customer</button>`;
+            } else if (table.status === "occupied") {
+                content += `<span style="font-size:22px;">${table.customer}</span><br>`;
+                content += `<button class="btn" style="font-size:10px; background:#ffda79; color:#000;" onclick="takeOrder(${table.id})">📋 Take Order</button>`;
+            } else if (table.status === "ordered") {
+                content += `<span style="font-size:20px;">${table.customer}</span> <small style="color:#ffda79;">Wants: <b>${table.order.name}</b></small><br>`;
+                content += `<small style="color:#00f0ff;">Select dish from menu below!</small>`;
+            } else if (table.status === "dirty") {
+                content += `<span style="font-size:16px;">🧽 Dirty Table</span><br>`;
+                content += `<button class="btn btn-clean" style="font-size:10px;" onclick="cleanTable(${table.id})">🧽 Clean Table (+15 pts)</button>`;
+            }
+
+            box.innerHTML = content;
+            container.appendChild(box);
+        });
+    }
+
+    function seatCustomer(tableId) {
+        const t = tables.find(x => x.id === tableId);
+        if (t.status === "empty") {
+            t.status = "occupied";
+            t.customer = customerAvatars[Math.floor(Math.random() * customerAvatars.length)];
+            renderTables();
+            document.getElementById("log").innerText = `Customer sat at Table ${tableId}! Take their order.`;
+        }
+    }
+
+    function takeOrder(tableId) {
+        const t = tables.find(x => x.id === tableId);
         const unlockedFoods = streetFoods.filter(f => score >= f.reqScore);
-        currentOrder = unlockedFoods[Math.floor(Math.random() * unlockedFoods.length)];
+        t.order = unlockedFoods[Math.floor(Math.random() * unlockedFoods.length)];
+        t.status = "ordered";
+        selectedTable = t;
+        renderTables();
+        document.getElementById("log").innerText = `Table ${tableId} ordered ${t.order.name}! Click the dish in the menu to serve.`;
+    }
+
+    function serveFood(food) {
+        const activeTable = tables.find(t => t.status === "ordered" && t.order.name === food.name);
         
-        orderTaken = false;
-        document.getElementById("take-order-btn").style.display = "block";
-        document.getElementById("order-details").style.display = "none";
+        if (!activeTable) {
+            document.getElementById("log").innerText = "❌ No table currently ordered " + food.name + "!";
+            return;
+        }
+
+        score += 25;
+        activeTable.status = "dirty";
+        activeTable.customer = null;
+        activeTable.order = null;
+        
+        document.getElementById("score").innerText = score;
+        document.getElementById("log").innerText = ` Served ${food.name} to Table ${activeTable.id}! (+25 pts). Table needs cleaning now.`;
+        
+        renderTables();
+        renderMenu();
     }
 
-    function takeOrder() {
-        orderTaken = true;
-        document.getElementById("take-order-btn").style.display = "none";
-        document.getElementById("order-details").style.display = "block";
-        document.getElementById("current-order").innerText = currentOrder.name;
-        document.getElementById("recipe-ingredients").innerText = currentOrder.ingredients.join(" + ");
-        document.getElementById("log").style.color = "#00f0ff";
-        document.getElementById("log").innerText = "📋 Order taken! Select dish from menu to serve.";
+    function cleanTable(tableId) {
+        const t = tables.find(x => x.id === tableId);
+        t.status = "empty";
+        score += 15;
+        document.getElementById("score").innerText = score;
+        document.getElementById("log").innerText = `🧽 Table ${tableId} cleaned! Ready for new customers (+15 pts).`;
+        renderTables();
+        renderMenu();
     }
 
-    function initMenu() {
+    function cleanKitchen() {
+        score += 15;
+        document.getElementById("score").innerText = score;
+        document.getElementById("log").innerText = "🍳 Kitchen thoroughly cleaned! (+15 pts)";
+        renderMenu();
+    }
+
+    function renderMenu() {
         const grid = document.getElementById("menu-grid");
         grid.innerHTML = "";
-        streetFoods.forEach((food) => {
+        streetFoods.forEach(food => {
             const btn = document.createElement("button");
+            btn.className = "menu-btn";
             const isUnlocked = score >= food.reqScore;
-            btn.id = "btn-" + food.name.replace(/\s+/g, '');
             btn.disabled = !isUnlocked;
-            btn.innerHTML = isUnlocked ? food.name : `🔒 ${food.name} (${food.reqScore} pts)`;
+            btn.innerHTML = isUnlocked ? `🍳 ${food.name}` : `🔒 ${food.name} (${food.reqScore} pts)`;
             btn.onclick = () => serveFood(food);
             grid.appendChild(btn);
         });
     }
 
-    function serveFood(food) {
-        const log = document.getElementById("log");
-        if (!orderTaken) {
-            log.style.color = "#ff0055";
-            log.innerText = "⚠️ Take customer's order first!";
-            return;
-        }
-        if (kitchenCleanliness <= 10) {
-            log.style.color = "#ff0055";
-            log.innerText = "⚠️ Kitchen too dirty! Clean kitchen first.";
-            return;
-        }
-        if (tableCleanliness <= 10) {
-            log.style.color = "#ff0055";
-            log.innerText = "⚠️ Tables too dirty! Clean tables first.";
-            return;
-        }
-
-        if (food.name === currentOrder.name) {
-            score += 25;
-            kitchenCleanliness = Math.max(0, kitchenCleanliness - 10);
-            tableCleanliness = Math.max(0, tableCleanliness - 15);
-            log.style.color = "#1dd1a1";
-            log.innerText = ` Perfect! Master Lee cooked ${food.name}. Served (+25 pts)!`;
-            updateGame();
-            spawnCustomer();
-        } else {
-            log.style.color = "#ff0055";
-            log.innerText = "❌ Wrong dish served!";
-        }
-    }
-
-    function cleanKitchen() {
-        score += 15;
-        kitchenCleanliness = 100;
-        document.getElementById("log").style.color = "#ffda79";
-        document.getElementById("log").innerText = "🍳 Kitchen thoroughly cleaned! (+15 pts)";
-        updateGame();
-    }
-
-    function cleanTables() {
-        score += 15;
-        tableCleanliness = 100;
-        document.getElementById("log").style.color = "#1dd1a1";
-        document.getElementById("log").innerText = "🪑 Tables & chairs cleaned! (+15 pts)";
-        updateGame();
-    }
-
-    function updateGame() {
-        document.getElementById("score").innerText = score;
-        document.getElementById("kitchen-cleanliness").innerText = kitchenCleanliness + "%";
-        document.getElementById("table-cleanliness").innerText = tableCleanliness + "%";
-        document.getElementById("table-status").innerText = tableCleanliness > 30 ? "Tables Clean & Ready" : "⚠️ Tables Need Cleaning";
-        initMenu();
-    }
-
-    initMenu();
-    spawnCustomer();
+    renderTables();
+    renderMenu();
 </script>
 
 </body>
