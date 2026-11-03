@@ -14,7 +14,7 @@
             padding: 10px;
         }
         .game-container {
-            max-width: 750px;
+            max-width: 780px;
             margin: auto;
             background: #1b0a2a;
             border: 3px solid #ff0055;
@@ -36,7 +36,7 @@
         }
 
         .cafe-floor {
-            background: linear-gradient(45deg, #2c163f 25%, #231034 25%, #231034 50%, #2c163f 50%, #2c163f 75%, #231034 75%, #231034 100%);
+            background: linear-gradient(45deg, #2c163f 25%, #231034 25%, #231034 50%, #2c163f 50%, #2c163f 75%, #231034 75%, #2c163f 75%, #231034 100%);
             background-size: 40px 40px;
             border: 3px solid #ffda79;
             border-radius: 12px;
@@ -84,6 +84,39 @@
         .btn:hover { background: #ffda79; color: #000; }
         .btn-clean { background: #00f0ff; color: #000; display: none; margin: 10px auto 0 auto; }
 
+        /* PREPARATION AREA WITH INFO */
+        .prep-area {
+            background: #250a3c;
+            border: 2px solid #ffda79;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 15px;
+        }
+        .info-box {
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px dashed #00f0ff;
+            border-radius: 8px;
+            padding: 8px;
+            margin: 8px 0;
+            font-size: 14px;
+        }
+        .ingredient-btn {
+            background: #170529;
+            color: #ffda79;
+            border: 1px solid #ffda79;
+            padding: 6px 10px;
+            margin: 3px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .ingredient-btn.selected {
+            background: #1dd1a1;
+            color: #000;
+            font-weight: bold;
+        }
+        .ingredient-btn:disabled { opacity: 0.4; border-color: #555; color: #888; }
+
         .menu-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -110,11 +143,11 @@
 
 <div class="game-container">
     <h1>⛩️ ASIAN STREET CAFELAND 🏮</h1>
-    <p style="color: #00f0ff; margin-bottom: 10px;">Serve 5 dishes to trigger kitchen cleaning. Clean tables after each customer!</p>
+    <p style="color: #00f0ff; margin-bottom: 10px;">Unlock Asian Street Foods & Ingredients with points!</p>
 
     <div class="score-bar">
         <span>💰 Score: <span id="score" style="color: #00f0ff;">0</span> pts</span>
-        <span>🍳 Dished Served: <span id="dish-count" style="color: #ffda79;">0 / 5</span></span>
+        <span>🍳 Dishes Served: <span id="dish-count" style="color: #ffda79;">0 / 5</span></span>
         <span>👨‍🍳 Kitchen: <span id="kitchen-status" style="color: #1dd1a1;">Clean</span></span>
     </div>
 
@@ -129,6 +162,20 @@
         <div class="tables-area" id="tables-container"></div>
     </div>
 
+    <!-- PREPARATION & INGREDIENT UNLOCK AREA WITH INFO -->
+    <div class="prep-area">
+        <h3 style="margin:2px; color:#ffda79;">🥢 Food Preparation Station</h3>
+        <p id="prep-instruction" style="font-size: 13px; color: #00f0ff;">Select a table order to view recipe info & prepare ingredients.</p>
+        
+        <div id="recipe-info-box" class="info-box" style="display: none;">
+            <strong style="color: #ffda79;">📋 Recipe Info:</strong>
+            <div id="required-ingredients-text" style="color: #00f0ff; margin-top: 3px;">-</div>
+        </div>
+
+        <div id="ingredient-list"></div>
+        <button class="btn" id="cook-btn" style="background:#1dd1a1; color:#000; margin-top:8px; display:none;" onclick="cookAndServe()">🍳 Cook & Serve Dish</button>
+    </div>
+
     <h3>📜 Asian Street Foods Menu (20 Items):</h3>
     <div class="menu-grid" id="menu-grid"></div>
 
@@ -137,31 +184,33 @@
 
 <script>
     const streetFoods = [
-        { name: "Ramen", reqScore: 0 },
-        { name: "Pad Thai", reqScore: 40 },
-        { name: "Takoyaki", reqScore: 80 },
-        { name: "Bao Buns", reqScore: 120 },
-        { name: "Dim Sum", reqScore: 160 },
-        { name: "Tanghulu", reqScore: 200 },
-        { name: "Boba Tea", reqScore: 240 },
-        { name: "Satay Skewers", reqScore: 280 },
-        { name: "Gyoza", reqScore: 320 },
-        { name: "Banh Mi", reqScore: 360 },
-        { name: "Taiyaki", reqScore: 400 },
-        { name: "Okonomiyaki", reqScore: 440 },
-        { name: "Kimbap", reqScore: 480 },
-        { name: "Hotteok", reqScore: 520 },
-        { name: "Tteokbokki", reqScore: 560 },
-        { name: "Jianbing", reqScore: 600 },
-        { name: "Spring Rolls", reqScore: 640 },
-        { name: "Lumpia", reqScore: 680 },
-        { name: "Egg Waffle", reqScore: 720 },
-        { name: "Stinky Tofu", reqScore: 800 }
+        { name: "Ramen", reqScore: 0, ingredients: [{ name: "Noodles", pts: 0 }, { name: "Broth", pts: 15 }, { name: "Egg", pts: 30 }] },
+        { name: "Pad Thai", reqScore: 50, ingredients: [{ name: "Rice Noodles", pts: 55 }, { name: "Peanuts", pts: 65 }, { name: "Tofu", pts: 75 }] },
+        { name: "Takoyaki", reqScore: 100, ingredients: [{ name: "Octopus", pts: 105 }, { name: "Batter", pts: 115 }, { name: "Mayo", pts: 125 }] },
+        { name: "Bao Buns", reqScore: 150, ingredients: [{ name: "Pork", pts: 155 }, { name: "Steamed Bun", pts: 165 }, { name: "Hoisin", pts: 175 }] },
+        { name: "Dim Sum", reqScore: 200, ingredients: [{ name: "Wrapper", pts: 205 }, { name: "Shrimp", pts: 215 }, { name: "Chili Oil", pts: 225 }] },
+        { name: "Tanghulu", reqScore: 250, ingredients: [{ name: "Strawberries", pts: 255 }, { name: "Sugar", pts: 265 }, { name: "Skewer", pts: 275 }] },
+        { name: "Boba Tea", reqScore: 300, ingredients: [{ name: "Tapioca", pts: 305 }, { name: "Milk Tea", pts: 315 }, { name: "Ice", pts: 325 }] },
+        { name: "Satay Skewers", reqScore: 350, ingredients: [{ name: "Chicken", pts: 355 }, { name: "Peanut Sauce", pts: 365 }, { name: "Cucumber", pts: 375 }] },
+        { name: "Gyoza", reqScore: 400, ingredients: [{ name: "Minced Meat", pts: 405 }, { name: "Cabbage", pts: 415 }, { name: "Soy Sauce", pts: 425 }] },
+        { name: "Banh Mi", reqScore: 450, ingredients: [{ name: "Baguette", pts: 455 }, { name: "Pate", pts: 465 }, { name: "Pickled Veg", pts: 475 }] },
+        { name: "Taiyaki", reqScore: 500, ingredients: [{ name: "Waffle Batter", pts: 505 }, { name: "Red Bean", pts: 515 }, { name: "Custard", pts: 525 }] },
+        { name: "Okonomiyaki", reqScore: 550, ingredients: [{ name: "Cabbage", pts: 555 }, { name: "Batter", pts: 565 }, { name: "Bonito Flakes", pts: 575 }] },
+        { name: "Kimbap", reqScore: 600, ingredients: [{ name: "Seaweed", pts: 605 }, { name: "Rice", pts: 615 }, { name: "Radish", pts: 625 }] },
+        { name: "Hotteok", reqScore: 650, ingredients: [{ name: "Dough", pts: 655 }, { name: "Sugar", pts: 665 }, { name: "Cinnamon", pts: 675 }] },
+        { name: "Tteokbokki", reqScore: 700, ingredients: [{ name: "Rice Cakes", pts: 705 }, { name: "Gochujang", pts: 715 }, { name: "Fish Cakes", pts: 725 }] },
+        { name: "Jianbing", reqScore: 750, ingredients: [{ name: "Crepe", pts: 755 }, { name: "Egg", pts: 765 }, { name: "Wonton", pts: 775 }] },
+        { name: "Spring Rolls", reqScore: 800, ingredients: [{ name: "Rice Paper", pts: 805 }, { name: "Shrimp", pts: 815 }, { name: "Herbs", pts: 825 }] },
+        { name: "Lumpia", reqScore: 850, ingredients: [{ name: "Wrapper", pts: 855 }, { name: "Pork", pts: 865 }, { name: "Carrots", pts: 875 }] },
+        { name: "Egg Waffle", reqScore: 900, ingredients: [{ name: "Egg Batter", pts: 905 }, { name: "Sugar", pts: 915 }, { name: "Condensed Milk", pts: 925 }] },
+        { name: "Stinky Tofu", reqScore: 1000, ingredients: [{ name: "Fermented Tofu", pts: 1005 }, { name: "Garlic", pts: 1015 }, { name: "Chili Sauce", pts: 1025 }] }
     ];
 
     let score = 0;
     let servedCount = 0;
     let isKitchenDirty = false;
+    let selectedTableForPrep = null;
+    let selectedIngredients = [];
 
     const tables = [
         { id: 1, status: "empty", customer: null, order: null },
@@ -189,8 +238,8 @@
                 content += `<span style="font-size:20px;">${table.customer}</span><br>`;
                 content += `<button class="btn" style="font-size:10px; background:#ffda79; color:#000;" onclick="takeOrder(${table.id})">📋 Take Order</button>`;
             } else if (table.status === "ordered") {
-                content += `<span style="font-size:18px;">${table.customer}</span> <small style="color:#ffda79;">Wants: <b>${table.order.name}</b></small><br>`;
-                content += `<small style="color:#00f0ff;">Select dish below!</small>`;
+                content += `<span style="font-size:18px;">${table.customer}</span> <small style="color:#ffda79;">Order: <b>${table.order.name}</b></small><br>`;
+                content += `<button class="btn" style="font-size:10px; background:#1dd1a1; color:#000;" onclick="prepareFood(${table.id})">🥢 Prepare Ingredients</button>`;
             } else if (table.status === "dirty") {
                 content += `<span style="font-size:14px; color:#ff0055;">🧽 Dirty Table</span><br>`;
                 content += `<button class="btn" style="background:#00f0ff; color:#000; font-size:10px;" onclick="cleanTable(${table.id})">🧽 Clean Table (+15 pts)</button>`;
@@ -217,33 +266,71 @@
         t.order = unlockedFoods[Math.floor(Math.random() * unlockedFoods.length)];
         t.status = "ordered";
         renderTables();
-        document.getElementById("log").innerText = `Table ${tableId} ordered ${t.order.name}! Click the dish in menu to serve.`;
+        document.getElementById("log").innerText = `Table ${tableId} ordered ${t.order.name}! Click 'Prepare Ingredients'.`;
     }
 
-    function serveFood(food) {
+    function prepareFood(tableId) {
+        const t = tables.find(x => x.id === tableId);
+        selectedTableForPrep = t;
+        selectedIngredients = [];
+        
+        document.getElementById("prep-instruction").innerText = `Preparing ${t.order.name} for Table ${tableId}. Click required ingredients to add:`;
+        
+        // SHOW RECIPE INFO
+        const reqNames = t.order.ingredients.map(i => i.name).join(" + ");
+        document.getElementById("required-ingredients-text").innerText = `Required Ingredients for ${t.order.name}: [ ${reqNames} ]`;
+        document.getElementById("recipe-info-box").style.display = "block";
+
+        const container = document.getElementById("ingredient-list");
+        container.innerHTML = "";
+
+        t.order.ingredients.forEach(ing => {
+            const btn = document.createElement("button");
+            btn.className = "ingredient-btn";
+            const isUnlocked = score >= ing.pts;
+            btn.disabled = !isUnlocked;
+            btn.innerText = isUnlocked ? `✔️ ${ing.name}` : `🔒 ${ing.name} (${ing.pts} pts)`;
+            btn.onclick = () => toggleIngredient(ing.name, btn);
+            container.appendChild(btn);
+        });
+
+        document.getElementById("cook-btn").style.display = "inline-block";
+    }
+
+    function toggleIngredient(ingName, btn) {
+        if (selectedIngredients.includes(ingName)) {
+            selectedIngredients = selectedIngredients.filter(i => i !== ingName);
+            btn.classList.remove("selected");
+        } else {
+            selectedIngredients.push(ingName);
+            btn.classList.add("selected");
+        }
+    }
+
+    function cookAndServe() {
         if (isKitchenDirty) {
             document.getElementById("log").style.color = "#ff0055";
             document.getElementById("log").innerText = "⚠️ Kitchen is dirty after 5 dishes! Clean kitchen first.";
             return;
         }
 
-        const activeTable = tables.find(t => t.status === "ordered" && t.order.name === food.name);
-        
-        if (!activeTable) {
+        if (!selectedTableForPrep) return;
+
+        const reqIngs = selectedTableForPrep.order.ingredients.map(i => i.name);
+        const hasAll = reqIngs.every(i => selectedIngredients.includes(i));
+
+        if (!hasAll) {
             document.getElementById("log").style.color = "#ff0055";
-            document.getElementById("log").innerText = "❌ No table currently ordered " + food.name + "!";
+            document.getElementById("log").innerText = "⚠️ Select all required ingredients for " + selectedTableForPrep.order.name + "!";
             return;
         }
 
-        score += 25;
+        score += 30;
         servedCount++;
+
+        selectedTableForPrep.status = "dirty";
+        selectedTableForPrep.customer = null;
         
-        // Müşteri kalkar, MASA KİRLENİR
-        activeTable.status = "dirty";
-        activeTable.customer = null;
-        activeTable.order = null;
-        
-        // 5 YEMEK KURALI - MUTFAK KİRLENİR VE TEMİZLE BUTONU AÇILIR
         if (servedCount >= 5) {
             isKitchenDirty = true;
             document.getElementById("kitchen-status").innerText = "Dirty!";
@@ -254,8 +341,15 @@
         document.getElementById("score").innerText = score;
         document.getElementById("dish-count").innerText = `${servedCount} / 5`;
         document.getElementById("log").style.color = "#1dd1a1";
-        document.getElementById("log").innerText = ` Served ${food.name} (+25 pts)! Clean Table ${activeTable.id} for new customer.`;
-        
+        document.getElementById("log").innerText = ` Prepared & Served ${selectedTableForPrep.order.name} (+30 pts)! Clean Table ${selectedTableForPrep.id}.`;
+
+        selectedTableForPrep = null;
+        selectedIngredients = [];
+        document.getElementById("prep-instruction").innerText = "Select a table order to view recipe info & prepare ingredients.";
+        document.getElementById("recipe-info-box").style.display = "none";
+        document.getElementById("ingredient-list").innerHTML = "";
+        document.getElementById("cook-btn").style.display = "none";
+
         renderTables();
         renderMenu();
     }
@@ -281,7 +375,7 @@
         document.getElementById("kitchen-status").style.color = "#1dd1a1";
         document.getElementById("kitchen-clean-btn").style.display = "none";
         document.getElementById("log").style.color = "#ffda79";
-        document.getElementById("log").innerText = "🍳 Kitchen cleaned! Chef Lee can now prepare 5 more dishes (+15 pts).";
+        document.getElementById("log").innerText = "🍳 Kitchen cleaned (+15 pts)! Master Chef Lee can make 5 more dishes.";
         renderMenu();
     }
 
@@ -294,7 +388,6 @@
             const isUnlocked = score >= food.reqScore;
             btn.disabled = !isUnlocked;
             btn.innerHTML = isUnlocked ? `🍳 ${food.name}` : `🔒 ${food.name} (${food.reqScore} pts)`;
-            btn.onclick = () => serveFood(food);
             grid.appendChild(btn);
         });
     }
